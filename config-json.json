@@ -1,0 +1,40 @@
+{
+    "pdf_directory": "data/pdfs",
+    "ebook_directory": "data/ebooks",
+    "vector_db_path": "data/vectordb",
+    "web_urls": [
+        "https://example-photography-site.com/composition",
+        "https://example-photography-site.com/lighting"
+    ],
+    "wikipedia_topics": [
+        "Photography",
+        "Photographic composition",
+        "Color theory",
+        "Photography lighting"
+    ],
+    "model": {
+        "local_model": "llama3",
+        "temperature": 0.3,
+        "max_tokens": 1024
+    },
+    "translation": {
+        "model": "Helsinki-NLP/opus-mt-en-pt",
+        "source_lang": "en",
+        "target_lang": "pt_BR"
+    },
+    "image_enhancement": {
+        "brightness_adjust": true,
+        "contrast_adjust": true,
+        "color_balance": true,
+        "sharpness": true
+    },
+    "scoring": {
+        "criteria": [
+            "composition",
+            "lighting",
+            "subject",
+            "technical_quality",
+            "creativity"
+        ]
+    }
+}
