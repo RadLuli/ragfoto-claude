@@ -155,5 +155,51 @@ class ImageEnhancer:
         # Convert back to PIL Image
         return Image.fromarray(img_array)
     
-mkdir -p data/{pdfs,ebooks,web_content}
-mkdir -p src/{document_processing,image_analysis,translation,enhancement,web}
+def _crop_for_rule_of_thirds(self, image: Image.Image) -> Image.Image:
+        """Crop the image to improve rule of thirds composition."""
+        # Convert to OpenCV format for analysis
+        img_array = np.array(image)
+        img_cv = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        
+        # Find edges and features
+        gray = cv2.cvtColor(img_cv, cv2.COLOR_BGR2GRAY)
+        edges = cv2.Canny(gray, 100, 200)
+        
+        # Find the most significant subject area
+        contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if not contours:
+            return image  # No contours found, return original
+        
+        # Find the largest contour by area
+        largest_contour = max(contours, key=cv2.contourArea)
+        x, y, w, h = cv2.boundingRect(largest_contour)
+        
+        # Determine the center of the subject
+        subject_center_x = x + w // 2
+        subject_center_y = y + h // 2
+        
+        # Image dimensions
+        img_h, img_w = img_array.shape[:2]
+        
+        # Calculate optimal crop to place subject at rule of thirds intersection
+        # Choose which third intersection to use based on position
+        target_x = img_w // 3 if subject_center_x > img_w // 2 else img_w * 2 // 3
+        target_y = img_h // 3 if subject_center_y > img_h // 2 else img_h * 2 // 3
+        
+        # Calculate crop offset
+        offset_x = subject_center_x - target_x
+        offset_y = subject_center_y - target_y
+        
+        # Calculate crop dimensions (maintain aspect ratio)
+        crop_w = min(img_w, int(img_w * 0.8))  # Crop at most 20% of width
+        crop_h = min(img_h, int(img_h * 0.8))  # Crop at most 20% of height
+        
+        # Calculate crop coordinates
+        crop_x1 = max(0, min(img_w - crop_w, offset_x))
+        crop_y1 = max(0, min(img_h - crop_h, offset_y))
+        crop_x2 = min(img_w, crop_x1 + crop_w)
+        crop_y2 = min(img_h, crop_y1 + crop_h)
+        
+        # Crop the image
+        cropped_img = image.crop((crop_x1, crop_y1, crop_x2, crop_y2))
+        return cropped_img
