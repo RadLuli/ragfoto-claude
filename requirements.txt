@@ -1,0 +1,13 @@
+streamlit==1.37.0
+langchain==0.1.12
+llama-index==0.10.15
+pypdf2==3.0.1
+ebooklib==0.18
+sentence-transformers==2.5.1
+chromadb==0.4.22
+pillow==10.2.0
+opencv-python==4.9.0.80
+scikit-image==0.22.0
+transformers==4.38.2
+torch==2.2.1
+wikipedia==1.4.0
